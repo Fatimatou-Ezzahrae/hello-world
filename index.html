@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Package Tracker - Track Your Shipments</title>
+  <title>Phone Tracker - Manage Your Contacts</title>
   <link href="styles.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -12,66 +12,104 @@
     <!-- Header -->
     <header class="header">
       <div class="header-content">
-        <h1 class="logo">📦 Package Tracker</h1>
-        <p class="tagline">Track all your shipments in one place</p>
+        <h1 class="logo">📱 Phone Tracker</h1>
+        <p class="tagline">Track and manage all your important contacts</p>
       </div>
     </header>
 
-    <!-- Add Tracking Section -->
+    <!-- Add Contact Section -->
     <section class="add-tracking-section">
       <div class="card">
-        <h2 class="section-title">Add New Tracking</h2>
+        <h2 class="section-title">Add New Contact</h2>
         <form id="trackingForm" class="tracking-form">
           <div class="form-group">
-            <label for="trackingNumber">Tracking Number</label>
+            <label for="contactName">Contact Name</label>
             <input 
               type="text" 
-              id="trackingNumber" 
-              placeholder="Enter tracking number" 
+              id="contactName" 
+              placeholder="Enter contact name" 
               required
               autocomplete="off"
             >
           </div>
           <div class="form-group">
-            <label for="carrier">Carrier</label>
-            <select id="carrier" required>
-              <option value="">Select carrier</option>
-              <option value="FedEx">FedEx</option>
-              <option value="UPS">UPS</option>
-              <option value="USPS">USPS</option>
-              <option value="DHL">DHL</option>
-              <option value="Amazon">Amazon Logistics</option>
+            <label for="phoneNumber">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phoneNumber" 
+              placeholder="(555) 123-4567" 
+              required
+              autocomplete="off"
+            >
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" required>
+              <option value="">Select category</option>
+              <option value="Personal">Personal</option>
+              <option value="Business">Business</option>
+              <option value="Family">Family</option>
+              <option value="Emergency">Emergency</option>
               <option value="Other">Other</option>
             </select>
           </div>
+          <div class="form-group">
+            <label for="notes">Notes (Optional)</label>
+            <input 
+              type="text" 
+              id="notes" 
+              placeholder="Add any notes about this contact"
+              autocomplete="off"
+            >
+          </div>
           <button type="submit" class="btn btn-primary">
-            <span>Track Package</span>
+            <span>Add Contact</span>
           </button>
         </form>
       </div>
     </section>
 
-    <!-- Active Shipments Section -->
+    <!-- Search and Filter Section -->
+    <section class="search-section">
+      <div class="search-container">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Search contacts by name or number..."
+          class="search-input"
+        >
+        <select id="filterCategory" class="filter-select">
+          <option value="all">All Categories</option>
+          <option value="Personal">Personal</option>
+          <option value="Business">Business</option>
+          <option value="Family">Family</option>
+          <option value="Emergency">Emergency</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Tracked Contacts Section -->
     <section class="shipments-section">
       <div class="section-header">
-        <h2 class="section-title">Active Shipments</h2>
+        <h2 class="section-title">Tracked Contacts</h2>
         <span id="shipmentCount" class="count-badge">0</span>
       </div>
       
       <div id="shipmentsContainer" class="shipments-container">
-        <!-- Shipments will be dynamically added here -->
+        <!-- Contacts will be dynamically added here -->
       </div>
 
       <div id="emptyState" class="empty-state">
-        <div class="empty-icon">📭</div>
-        <h3>No shipments tracked yet</h3>
-        <p>Add a tracking number above to get started</p>
+        <div class="empty-icon">📞</div>
+        <h3>No contacts tracked yet</h3>
+        <p>Add a contact above to get started</p>
       </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer">
-      <p>Package Tracker &copy; 2025 | Track your shipments with ease</p>
+      <p>Phone Tracker &copy; 2025 | Manage your contacts with ease</p>
     </footer>
   </div>
 

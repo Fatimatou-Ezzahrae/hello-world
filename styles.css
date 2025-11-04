@@ -423,6 +423,166 @@ body {
   background: var(--danger-color);
 }
 
+/* Search Section */
+.search-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 30px;
+}
+
+.search-container {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+
+.search-input {
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-select {
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: white;
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Contact Card Specific Styles */
+.contact-details {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.contact-phone {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  font-family: 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-phone a {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.contact-phone a:hover {
+  color: var(--primary-hover);
+}
+
+.contact-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.contact-category.personal {
+  background: rgba(139, 92, 246, 0.1);
+  color: #8b5cf6;
+}
+
+.contact-category.business {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary-color);
+}
+
+.contact-category.family {
+  background: rgba(236, 72, 153, 0.1);
+  color: #ec4899;
+}
+
+.contact-category.emergency {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+}
+
+.contact-category.other {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--text-secondary);
+}
+
+.contact-notes {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 8px 12px;
+  background: var(--bg-color);
+  border-radius: var(--radius-sm);
+  margin-top: 8px;
+}
+
+.contact-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 2px solid var(--border-color);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.last-contacted {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.call-button {
+  background: var(--success-color);
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.call-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
 /* Footer */
 .footer {
   text-align: center;
@@ -442,7 +602,8 @@ body {
   }
 
   .card,
-  .shipments-section {
+  .shipments-section,
+  .search-section {
     padding: 20px;
   }
 
@@ -462,6 +623,14 @@ body {
   .shipment-actions {
     width: 100%;
     justify-content: flex-end;
+  }
+
+  .search-container {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-select {
+    min-width: 100%;
   }
 
   .toast {

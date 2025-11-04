@@ -1,248 +1,246 @@
-// Package Tracker Application
-class PackageTracker {
+// Phone Tracker Application
+class PhoneTracker {
   constructor() {
-    this.shipments = this.loadShipments();
+    this.contacts = this.loadContacts();
     this.init();
   }
 
   init() {
     this.setupEventListeners();
-    this.renderShipments();
+    this.renderContacts();
+    this.updateContactCount();
   }
 
   setupEventListeners() {
+    // Form submission
     const form = document.getElementById('trackingForm');
-    form.addEventListener('submit', (e) => this.handleAddTracking(e));
+    form.addEventListener('submit', (e) => this.handleAddContact(e));
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', () => this.handleSearch());
+
+    // Filter functionality
+    const filterCategory = document.getElementById('filterCategory');
+    filterCategory.addEventListener('change', () => this.handleSearch());
   }
 
-  handleAddTracking(e) {
+  handleAddContact(e) {
     e.preventDefault();
-    
-    const trackingNumber = document.getElementById('trackingNumber').value.trim();
-    const carrier = document.getElementById('carrier').value;
 
-    if (!trackingNumber || !carrier) {
-      this.showToast('Please fill in all fields', 'error');
+    const contactName = document.getElementById('contactName').value.trim();
+    const phoneNumber = document.getElementById('phoneNumber').value.trim();
+    const category = document.getElementById('category').value;
+    const notes = document.getElementById('notes').value.trim();
+
+    // Validate phone number
+    if (!this.validatePhoneNumber(phoneNumber)) {
+      this.showToast('Please enter a valid phone number', 'error');
       return;
     }
 
-    // Check for duplicates
-    if (this.shipments.some(s => s.trackingNumber === trackingNumber)) {
-      this.showToast('This tracking number is already being tracked', 'error');
-      return;
-    }
+    // Create contact object
+    const contact = {
+      id: Date.now().toString(),
+      name: contactName,
+      phone: this.formatPhoneNumber(phoneNumber),
+      category: category,
+      notes: notes,
+      addedDate: new Date().toISOString(),
+      lastContacted: null,
+      callCount: 0
+    };
 
-    const shipment = this.createShipment(trackingNumber, carrier);
-    this.shipments.unshift(shipment);
-    this.saveShipments();
-    this.renderShipments();
-    
+    // Add to contacts array
+    this.contacts.unshift(contact);
+    this.saveContacts();
+    this.renderContacts();
+    this.updateContactCount();
+
     // Reset form
     e.target.reset();
+    this.showToast('Contact added successfully!', 'success');
+  }
+
+  validatePhoneNumber(phone) {
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, '');
+    // Check if it has at least 10 digits
+    return cleaned.length >= 10;
+  }
+
+  formatPhoneNumber(phone) {
+    // Remove all non-digit characters
+    const cleaned = phone.replace(/\D/g, '');
     
-    this.showToast('Tracking added successfully!', 'success');
-  }
-
-  createShipment(trackingNumber, carrier) {
-    const statuses = ['pending', 'in-transit', 'delivered'];
-    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    // Format as (XXX) XXX-XXXX for US numbers
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    } else if (cleaned.length === 11 && cleaned[0] === '1') {
+      return `+1 (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
+    }
     
-    return {
-      id: Date.now().toString(),
-      trackingNumber,
-      carrier,
-      status,
-      addedDate: new Date().toISOString(),
-      estimatedDelivery: this.generateEstimatedDelivery(),
-      timeline: this.generateTimeline(status)
-    };
+    // Return original if doesn't match standard format
+    return phone;
   }
 
-  generateEstimatedDelivery() {
-    const days = Math.floor(Math.random() * 5) + 1;
-    const date = new Date();
-    date.setDate(date.getDate() + days);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  }
+  handleSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const filterCategory = document.getElementById('filterCategory').value;
 
-  generateTimeline(status) {
-    const locations = [
-      'Memphis, TN',
-      'Louisville, KY',
-      'Chicago, IL',
-      'Los Angeles, CA',
-      'New York, NY',
-      'Dallas, TX',
-      'Atlanta, GA',
-      'Seattle, WA'
-    ];
+    let filteredContacts = this.contacts;
 
-    const events = [
-      { status: 'Order Placed', icon: '📝' },
-      { status: 'Package Picked Up', icon: '📦' },
-      { status: 'In Transit', icon: '🚚' },
-      { status: 'Out for Delivery', icon: '🚛' },
-      { status: 'Delivered', icon: '✅' }
-    ];
-
-    let timeline = [];
-    let numEvents = 2;
-
-    if (status === 'in-transit') {
-      numEvents = 3;
-    } else if (status === 'delivered') {
-      numEvents = 5;
+    // Filter by search term
+    if (searchTerm) {
+      filteredContacts = filteredContacts.filter(contact => 
+        contact.name.toLowerCase().includes(searchTerm) ||
+        contact.phone.toLowerCase().includes(searchTerm)
+      );
     }
 
-    for (let i = 0; i < numEvents; i++) {
-      const event = events[i];
-      const hoursAgo = (numEvents - i) * 12;
-      const date = new Date();
-      date.setHours(date.getHours() - hoursAgo);
-
-      timeline.push({
-        status: event.status,
-        location: locations[Math.floor(Math.random() * locations.length)],
-        date: date.toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true
-        }),
-        icon: event.icon
-      });
+    // Filter by category
+    if (filterCategory !== 'all') {
+      filteredContacts = filteredContacts.filter(contact => 
+        contact.category === filterCategory
+      );
     }
 
-    return timeline;
+    this.renderContacts(filteredContacts);
   }
 
-  renderShipments() {
+  renderContacts(contactsToRender = this.contacts) {
     const container = document.getElementById('shipmentsContainer');
     const emptyState = document.getElementById('emptyState');
-    const countBadge = document.getElementById('shipmentCount');
 
-    countBadge.textContent = this.shipments.length;
-
-    if (this.shipments.length === 0) {
+    if (contactsToRender.length === 0) {
       container.innerHTML = '';
       emptyState.classList.add('visible');
       return;
     }
 
     emptyState.classList.remove('visible');
-    container.innerHTML = this.shipments.map(shipment => this.createShipmentCard(shipment)).join('');
+    container.innerHTML = contactsToRender.map(contact => this.createContactCard(contact)).join('');
 
-    // Add event listeners to cards
-    this.shipments.forEach(shipment => {
-      const card = document.getElementById(`shipment-${shipment.id}`);
-      const deleteBtn = card.querySelector('.btn-danger');
-      const cardClickable = card.querySelector('.shipment-clickable');
+    // Add event listeners to buttons
+    contactsToRender.forEach(contact => {
+      const callBtn = document.getElementById(`call-${contact.id}`);
+      const deleteBtn = document.getElementById(`delete-${contact.id}`);
 
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.deleteShipment(shipment.id);
-      });
+      if (callBtn) {
+        callBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.handleCall(contact.id);
+        });
+      }
 
-      cardClickable.addEventListener('click', () => {
-        this.toggleTimeline(shipment.id);
-      });
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.handleDelete(contact.id);
+        });
+      }
     });
   }
 
-  createShipmentCard(shipment) {
-    const statusConfig = {
-      'pending': { label: 'Pending', icon: '⏳', class: 'pending' },
-      'in-transit': { label: 'In Transit', icon: '🚚', class: 'in-transit' },
-      'delivered': { label: 'Delivered', icon: '✅', class: 'delivered' },
-      'exception': { label: 'Exception', icon: '⚠️', class: 'exception' }
-    };
-
-    const config = statusConfig[shipment.status] || statusConfig['pending'];
+  createContactCard(contact) {
+    const categoryClass = contact.category.toLowerCase();
+    const addedDate = new Date(contact.addedDate).toLocaleDateString();
+    const lastContactedText = contact.lastContacted 
+      ? new Date(contact.lastContacted).toLocaleDateString()
+      : 'Never';
 
     return `
-      <div class="shipment-card" id="shipment-${shipment.id}">
-        <div class="shipment-clickable">
-          <div class="shipment-header">
-            <div class="shipment-info">
-              <div class="tracking-number">${shipment.trackingNumber}</div>
-              <div class="carrier-name">${shipment.carrier}</div>
+      <div class="shipment-card">
+        <div class="shipment-header">
+          <div class="shipment-info">
+            <div class="tracking-number">${contact.name}</div>
+            <div class="contact-details">
+              <div class="contact-phone">
+                📞 <a href="tel:${contact.phone.replace(/\D/g, '')}">${contact.phone}</a>
+              </div>
+              <span class="contact-category ${categoryClass}">${contact.category}</span>
             </div>
-            <div class="shipment-actions">
-              <button class="btn btn-danger" title="Delete tracking">🗑️</button>
-            </div>
+            ${contact.notes ? `<div class="contact-notes">📝 ${contact.notes}</div>` : ''}
           </div>
-
-          <div class="shipment-status">
-            <span class="status-badge ${config.class}">
-              <span class="status-icon">${config.icon}</span>
-              ${config.label}
-            </span>
-            ${shipment.status !== 'delivered' ? 
-              `<span class="estimated-delivery">Est. ${shipment.estimatedDelivery}</span>` : 
-              `<span class="estimated-delivery">Delivered</span>`
-            }
+          <div class="shipment-actions">
+            <button id="call-${contact.id}" class="call-button">
+              📞 Call
+            </button>
+            <button id="delete-${contact.id}" class="btn btn-danger">
+              Delete
+            </button>
           </div>
         </div>
-
-        <div class="timeline" id="timeline-${shipment.id}">
-          <h3 style="font-size: 1rem; margin-bottom: 16px; color: var(--text-secondary);">Tracking History</h3>
-          ${shipment.timeline.map((event, index) => `
-            <div class="timeline-item">
-              <div class="timeline-dot">${event.icon}</div>
-              <div class="timeline-content">
-                <div class="timeline-status">${event.status}</div>
-                <div class="timeline-location">${event.location}</div>
-                <div class="timeline-date">${event.date}</div>
-              </div>
-            </div>
-          `).join('')}
+        <div class="contact-meta">
+          <div class="last-contacted">
+            <span>Last contacted: ${lastContactedText}</span>
+          </div>
+          <div>
+            <span>Calls: ${contact.callCount} | Added: ${addedDate}</span>
+          </div>
         </div>
       </div>
     `;
   }
 
-  toggleTimeline(shipmentId) {
-    const timeline = document.getElementById(`timeline-${shipmentId}`);
-    timeline.classList.toggle('expanded');
+  handleCall(contactId) {
+    const contact = this.contacts.find(c => c.id === contactId);
+    if (!contact) return;
+
+    // Update last contacted and call count
+    contact.lastContacted = new Date().toISOString();
+    contact.callCount++;
+
+    this.saveContacts();
+    this.renderContacts();
+
+    // Initiate call (will open phone dialer on mobile)
+    const phoneNumber = contact.phone.replace(/\D/g, '');
+    window.location.href = `tel:${phoneNumber}`;
+
+    this.showToast(`Calling ${contact.name}...`, 'success');
   }
 
-  deleteShipment(shipmentId) {
-    if (confirm('Are you sure you want to stop tracking this shipment?')) {
-      this.shipments = this.shipments.filter(s => s.id !== shipmentId);
-      this.saveShipments();
-      this.renderShipments();
-      this.showToast('Tracking removed', 'success');
+  handleDelete(contactId) {
+    const contact = this.contacts.find(c => c.id === contactId);
+    if (!contact) return;
+
+    if (confirm(`Are you sure you want to delete ${contact.name}?`)) {
+      this.contacts = this.contacts.filter(c => c.id !== contactId);
+      this.saveContacts();
+      this.renderContacts();
+      this.updateContactCount();
+      this.showToast('Contact deleted successfully', 'success');
     }
+  }
+
+  updateContactCount() {
+    const countBadge = document.getElementById('shipmentCount');
+    countBadge.textContent = this.contacts.length;
+  }
+
+  saveContacts() {
+    localStorage.setItem('phoneTrackerContacts', JSON.stringify(this.contacts));
+  }
+
+  loadContacts() {
+    const saved = localStorage.getItem('phoneTrackerContacts');
+    return saved ? JSON.parse(saved) : [];
   }
 
   showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = `toast ${type}`;
-    
-    setTimeout(() => toast.classList.add('show'), 100);
-    
+    toast.classList.add('show');
+
     setTimeout(() => {
       toast.classList.remove('show');
     }, 3000);
   }
-
-  saveShipments() {
-    localStorage.setItem('packageTrackerShipments', JSON.stringify(this.shipments));
-  }
-
-  loadShipments() {
-    const saved = localStorage.getItem('packageTrackerShipments');
-    return saved ? JSON.parse(saved) : [];
-  }
 }
 
-// Initialize the application when DOM is ready
+// Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  new PackageTracker();
+  new PhoneTracker();
 });
