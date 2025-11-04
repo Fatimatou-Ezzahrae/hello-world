@@ -1,18 +1,83 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>my-first-website</title>
-  <LINK href="styles.css" rel="stylesheet" type="text/css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Package Tracker - Track Your Shipments</title>
+  <link href="styles.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1 class="logo">📦 Package Tracker</h1>
+        <p class="tagline">Track all your shipments in one place</p>
+      </div>
+    </header>
 
-<img src="https://octodex.github.com/images/daftpunktocat-thomas.gif" id="octocat" alt="octocat-gif" />
+    <!-- Add Tracking Section -->
+    <section class="add-tracking-section">
+      <div class="card">
+        <h2 class="section-title">Add New Tracking</h2>
+        <form id="trackingForm" class="tracking-form">
+          <div class="form-group">
+            <label for="trackingNumber">Tracking Number</label>
+            <input 
+              type="text" 
+              id="trackingNumber" 
+              placeholder="Enter tracking number" 
+              required
+              autocomplete="off"
+            >
+          </div>
+          <div class="form-group">
+            <label for="carrier">Carrier</label>
+            <select id="carrier" required>
+              <option value="">Select carrier</option>
+              <option value="FedEx">FedEx</option>
+              <option value="UPS">UPS</option>
+              <option value="USPS">USPS</option>
+              <option value="DHL">DHL</option>
+              <option value="Amazon">Amazon Logistics</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <span>Track Package</span>
+          </button>
+        </form>
+      </div>
+    </section>
 
-<!-- Change this code here by copy and pasting your template on line 15 -->
-<p>Welcome to your first GitHub Pages website!</p>
+    <!-- Active Shipments Section -->
+    <section class="shipments-section">
+      <div class="section-header">
+        <h2 class="section-title">Active Shipments</h2>
+        <span id="shipmentCount" class="count-badge">0</span>
+      </div>
+      
+      <div id="shipmentsContainer" class="shipments-container">
+        <!-- Shipments will be dynamically added here -->
+      </div>
 
+      <div id="emptyState" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>No shipments tracked yet</h3>
+        <p>Add a tracking number above to get started</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Package Tracker &copy; 2025 | Track your shipments with ease</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
